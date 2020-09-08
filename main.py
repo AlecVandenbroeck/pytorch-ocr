@@ -53,7 +53,7 @@ def str2bool(v):
     return v.lower() in ("yes", "y", "true", "t", "1")
 
 class PytorchTextExtractor:
-    def __init__(self, extraction_model_path, ocr_model_path, use_gpu=True, write_debug=True):
+    def __init__(self, extraction_model_path, ocr_model_path, refiner_model, use_gpu=True, write_debug=True):
         # Text extraction config
         self.extraction_model_path = extraction_model_path
         self.text_threshold = 0.7 #text confidence threshold
@@ -63,7 +63,7 @@ class PytorchTextExtractor:
         self.refine = True #enable link refiner
         self.canvas_size = 1280
         self.mag_ratio = 1.5 # Magnification ratio
-        self.refiner_model = './models/craft_refiner_CTW1500.pth'
+        self.refiner_model = refiner_model
         self.poly = False
 
         # General config
@@ -73,7 +73,7 @@ class PytorchTextExtractor:
         # Text recognition config
         self.recognition_workers = 4
         self.recognition_batch_size=192
-        self.recognition_saved_model='./models/TPS-ResNet-BiLSTM-Attn.pth'
+        self.recognition_saved_model=ocr_model_path
         self.recognition_batch_max_length=25
         self.recognition_imgH=32
         self.recognition_imgW=100
@@ -273,7 +273,6 @@ class PytorchTextExtractor:
         predictions=[]
         # Recognition
         for i, img in enumerate(images_cropped):
-            print(img.shape)
             if img.shape[0]>0 and img.shape[1]>0:
                 text, certainty = self.recognize_text(img)
             else:
