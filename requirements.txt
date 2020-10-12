@@ -5,3 +5,4 @@ scikit-image==0.14.2
 scipy
 lmdb
 natsort
+nltk
